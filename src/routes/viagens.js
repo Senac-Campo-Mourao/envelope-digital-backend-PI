@@ -1,0 +1,12 @@
+const express = require('express');
+const router = express.Router();
+const viagemController = require('../controllers/viagemController');
+const authMiddleware = require('../middlewares/auth');
+
+router.use(authMiddleware);
+
+router.post('/', viagemController.createViagem);
+router.get('/', viagemController.getViagens);
+router.get('/:id', viagemController.getViagemById);
+
+module.exports = router;
