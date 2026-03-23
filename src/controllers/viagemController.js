@@ -7,16 +7,21 @@ exports.createViagem = async (req, res) => {
       id_motorista: req.userId,
       precoTotal: req.body.pesoSaida * req.body.precoTonelada,
       adiantamento: req.body.pesoSaida * req.body.precoTonelada * 0.8,
-      ordemPagamento: req.body.pesoSaida * req.body.precoTonelada * 0.8,
-      resumo: req.body.resumo
+      ordemPagamento: req.body.pesoSaida * req.body.precoTonelada * 0.8
     };
     
     const viagemId = await Viagem.create(viagemData);
     
-    res.status(201).json({ id: viagemId, message: 'Viagem criada com sucesso!' });
+    res.status(201).json({ 
+      id: viagemId, 
+      message: 'Viagem criada com sucesso!' 
+    });
   } catch (error) {
     console.error('Erro ao criar viagem:', error);
-    res.status(500).json({ error: 'Erro ao salvar viagem' });
+    res.status(500).json({ 
+      error: 'Erro ao salvar viagem',
+      details: error.message 
+    });
   }
 };
 
