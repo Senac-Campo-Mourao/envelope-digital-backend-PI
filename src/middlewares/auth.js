@@ -1,4 +1,3 @@
-cat > src/middlewares/auth.js << 'EOF'
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
@@ -29,4 +28,3 @@ module.exports = (req, res, next) => {
     return next();
   });
 };
-EOF

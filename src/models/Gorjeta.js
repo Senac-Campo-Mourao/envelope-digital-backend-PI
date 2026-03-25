@@ -1,20 +1,19 @@
 const pool = require('../database/connection');
 
-class Oficina {
-  static async create(oficinaData, idViagem, connection = pool) {
-    const { data, km, tipo, preco } = oficinaData;
+class Gorjeta {
+  static async create(gorjetaData, idViagem, connection = pool) {
+    const { valor } = gorjetaData;
     const db = connection || pool;
     const [result] = await db.execute(
-      `INSERT INTO oficina (data, km, tipo, preco, id_viagem)
-       VALUES (?, ?, ?, ?, ?)`,
-      [data, km, tipo, preco, idViagem]
+      'INSERT INTO gorjeta (valor, id_viagem) VALUES (?, ?)',
+      [valor, idViagem]
     );
     return result.insertId;
   }
 
   static async getByViagemId(idViagem) {
     const [rows] = await pool.execute(
-      'SELECT * FROM oficina WHERE id_viagem = ? ORDER BY data',
+      'SELECT * FROM gorjeta WHERE id_viagem = ?',
       [idViagem]
     );
     return rows;
@@ -22,11 +21,11 @@ class Oficina {
 
   static async deleteByViagemId(idViagem) {
     const [result] = await pool.execute(
-      'DELETE FROM oficina WHERE id_viagem = ?',
+      'DELETE FROM gorjeta WHERE id_viagem = ?',
       [idViagem]
     );
     return result.affectedRows;
   }
 }
 
-module.exports = Oficina;
+module.exports = Gorjeta;

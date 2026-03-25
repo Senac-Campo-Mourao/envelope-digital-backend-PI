@@ -1,6 +1,6 @@
-cat > src/controllers/authController.js << 'EOF'
 const Motorista = require('../models/Motorista');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -50,7 +50,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
     
-    const isValidPassword = await Motorista.comparePassword(senha, user.senha);
+    const isValidPassword = await bcrypt.compare(senha, user.senha);
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
@@ -71,4 +71,3 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Erro ao fazer login' });
   }
 };
-EOF

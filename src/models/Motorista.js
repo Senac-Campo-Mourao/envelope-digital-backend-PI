@@ -1,4 +1,4 @@
-cat > src/models/Motorista.js << 'EOF'
+
 const pool = require('../database/connection');
 const bcrypt = require('bcryptjs');
 
@@ -39,4 +39,3 @@ class Motorista {
 }
 
 module.exports = Motorista;
-EOF

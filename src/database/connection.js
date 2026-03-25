@@ -1,4 +1,3 @@
-cat > src/database/connection.js << 'EOF'
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
@@ -13,4 +12,3 @@ const pool = mysql.createPool({
 });
 
 module.exports = pool;
-EOF

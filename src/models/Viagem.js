@@ -1,13 +1,12 @@
 const pool = require('../database/connection');
 
 class Viagem {
-  static async create(viagemData) {
-    const connection = await pool.getConnection();
+  static async create(viagemData, connection = pool) {
+    const useConnection = connection || pool;
+    
     try {
-      await connection.beginTransaction();
-
       // Criar resumo
-      const [resumoResult] = await connection.execute(
+      const [resumoResult] = await useConnection.execute(
         `INSERT INTO resumo (total_bruto, total_gastos, comicao, total_liquido) 
          VALUES (?, ?, ?, ?)`,
         [viagemData.precoTotal || 0, 0, 0, viagemData.precoTotal || 0]
@@ -15,7 +14,7 @@ class Viagem {
       const id_resumo = resumoResult.insertId;
 
       // Criar valor_frete
-      const [valorFreteResult] = await connection.execute(
+      const [valorFreteResult] = await useConnection.execute(
         `INSERT INTO valor_frete (preco_tonelada, adintamento, total_preco_tonelada, ordem_pagamento) 
          VALUES (?, ?, ?, ?)`,
         [viagemData.precoTonelada || 0, viagemData.adiantamento || 0, viagemData.precoTotal || 0, viagemData.ordemPagamento || 0]
@@ -23,7 +22,7 @@ class Viagem {
       const id_valor_frete = valorFreteResult.insertId;
 
       // Criar viagem
-      const [viagemResult] = await connection.execute(
+      const [viagemResult] = await useConnection.execute(
         `INSERT INTO viagem (
           data_entrada, data_chegada, km_saida, km_entrada, 
           peso_saida, peso_chegada, id_motorista, id_saida, id_chegada,
@@ -44,13 +43,9 @@ class Viagem {
         ]
       );
 
-      await connection.commit();
       return viagemResult.insertId;
     } catch (error) {
-      await connection.rollback();
       throw error;
-    } finally {
-      connection.release();
     }
   }
 
