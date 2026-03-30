@@ -1,3 +1,4 @@
+// src/models/Cidade.js
 const pool = require('../database/connection');
 
 class Cidade {
@@ -34,6 +35,31 @@ class Cidade {
       [id]
     );
     return rows[0];
+  }
+
+  // NOVO: Buscar cidade por nome e UF, ou criar se não existir
+  static async getOrCreate(nome, uf) {
+    // Primeiro, tentar buscar a cidade
+    const [rows] = await pool.execute(
+      'SELECT id_cidades as id, cidade, estado_sigla FROM cidades WHERE cidade = ? AND estado_sigla = ?',
+      [nome, uf]
+    );
+    
+    if (rows.length > 0) {
+      return rows[0];
+    }
+    
+    // Se não existir, criar nova cidade
+    const [result] = await pool.execute(
+      'INSERT INTO cidades (cidade, estado_sigla) VALUES (?, ?)',
+      [nome, uf]
+    );
+    
+    return {
+      id: result.insertId,
+      cidade: nome,
+      estado_sigla: uf
+    };
   }
 
   // Método para popular cidades (útil para desenvolvimento)

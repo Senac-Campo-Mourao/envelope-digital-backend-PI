@@ -1,3 +1,4 @@
+// src/controllers/cidadeController.js
 const Cidade = require('../models/Cidade');
 
 exports.getCidades = async (req, res) => {
@@ -6,10 +7,8 @@ exports.getCidades = async (req, res) => {
     let cidades;
     
     if (search && search.trim()) {
-      // Busca com filtro
       cidades = await Cidade.search(search, parseInt(limit));
     } else {
-      // Busca todas
       cidades = await Cidade.getAll(parseInt(limit));
     }
     
@@ -30,5 +29,23 @@ exports.getCidadeById = async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar cidade:', error);
     res.status(500).json({ error: 'Erro ao carregar cidade' });
+  }
+};
+
+// NOVO: Criar ou buscar cidade pelo nome e UF
+exports.getOrCreateCidade = async (req, res) => {
+  try {
+    const { nome, uf } = req.body;
+    
+    if (!nome || !uf) {
+      return res.status(400).json({ error: 'Nome da cidade e UF são obrigatórios' });
+    }
+    
+    const cidade = await Cidade.getOrCreate(nome, uf);
+    
+    res.json(cidade);
+  } catch (error) {
+    console.error('Erro ao criar/buscar cidade:', error);
+    res.status(500).json({ error: 'Erro ao processar cidade' });
   }
 };

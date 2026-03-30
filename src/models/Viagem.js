@@ -1,3 +1,4 @@
+// src/models/Viagem.js
 const pool = require('../database/connection');
 
 class Viagem {
@@ -5,17 +6,17 @@ class Viagem {
     const useConnection = connection || pool;
     
     try {
-      // Criar resumo
+      // Criar resumo - CORRIGIDO: 'comicao' -> 'comissao'
       const [resumoResult] = await useConnection.execute(
-        `INSERT INTO resumo (total_bruto, total_gastos, comicao, total_liquido) 
+        `INSERT INTO resumo (total_bruto, total_gastos, comissao, total_liquido) 
          VALUES (?, ?, ?, ?)`,
         [viagemData.precoTotal || 0, 0, 0, viagemData.precoTotal || 0]
       );
       const id_resumo = resumoResult.insertId;
 
-      // Criar valor_frete
+      // Criar valor_frete - CORRIGIDO: 'adintamento' -> 'adiantamento'
       const [valorFreteResult] = await useConnection.execute(
-        `INSERT INTO valor_frete (preco_tonelada, adintamento, total_preco_tonelada, ordem_pagamento) 
+        `INSERT INTO valor_frete (preco_tonelada, adiantamento, total_preco_tonelada, ordem_pagamento) 
          VALUES (?, ?, ?, ?)`,
         [viagemData.precoTonelada || 0, viagemData.adiantamento || 0, viagemData.precoTotal || 0, viagemData.ordemPagamento || 0]
       );
@@ -69,12 +70,13 @@ class Viagem {
   }
 
   static async getById(id, motoristaId) {
+    // CORRIGIDO: 'adintamento' -> 'adiantamento', 'comicao' -> 'comissao'
     const [rows] = await pool.execute(
       `SELECT v.*, 
               c1.cidade as cidade_saida, c1.estado_sigla as estado_saida,
               c2.cidade as cidade_chegada, c2.estado_sigla as estado_chegada,
-              vf.preco_tonelada, vf.adintamento, vf.total_preco_tonelada as total_bruto,
-              r.total_gastos, r.comicao, r.total_liquido
+              vf.preco_tonelada, vf.adiantamento, vf.total_preco_tonelada as total_bruto,
+              r.total_gastos, r.comissao, r.total_liquido
        FROM viagem v
        LEFT JOIN cidades c1 ON v.id_saida = c1.id_cidades
        LEFT JOIN cidades c2 ON v.id_chegada = c2.id_cidades

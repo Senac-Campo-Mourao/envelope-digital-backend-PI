@@ -1,3 +1,4 @@
+// src/routes/viagens.js
 const express = require('express');
 const router = express.Router();
 const viagemController = require('../controllers/viagemController');
