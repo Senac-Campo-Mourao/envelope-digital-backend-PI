@@ -10,5 +10,7 @@ router.use(authMiddleware);
 router.post('/', viagemController.createViagem);
 router.get('/', viagemController.getViagens);
 router.get('/:id', viagemController.getViagemById);
+router.put('/:id', viagemController.updateViagem);  // NOVA ROTA
+router.delete('/:id', viagemController.deleteViagem);  // NOVA ROTA
 
 module.exports = router;

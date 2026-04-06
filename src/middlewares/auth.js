@@ -1,4 +1,3 @@
-// src/middlewares/auth.js
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
@@ -20,7 +19,7 @@ module.exports = (req, res, next) => {
     return res.status(401).json({ error: 'Token mal formatado' });
   }
   
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET || 'secret_key', (err, decoded) => {
     if (err) {
       return res.status(401).json({ error: 'Token inválido' });
     }
