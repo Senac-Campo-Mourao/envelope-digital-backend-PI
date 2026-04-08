@@ -8,9 +8,31 @@ const viagemRoutes = require('./routes/viagens');
 
 const app = express();
 
-// Configuração CORS mais permissiva para desenvolvimento
+// CORS para produção (Cloudflare Pages) e desenvolvimento local
+const allowedOrigins = [
+  'https://envelope-digital-frontend-pi.pages.dev',
+  'http://localhost:3000',
+  'http://localhost:3002',
+  'http://127.0.0.1:3000',
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+  ...(process.env.FRONTEND_URLS
+    ? process.env.FRONTEND_URLS.split(',').map((url) => url.trim()).filter(Boolean)
+    : [])
+];
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3002', 'http://127.0.0.1:3000'],
+  origin: (origin, callback) => {
+    // Permite chamadas sem origem (ex.: health checks, curl, Postman)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Origem não permitida pelo CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
