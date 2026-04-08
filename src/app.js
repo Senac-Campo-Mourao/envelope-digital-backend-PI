@@ -20,6 +20,44 @@ const allowedOrigins = [
     : [])
 ];
 
+const wildcardHostSuffixes = [
+  '.envelope-digital-frontend-pi.pages.dev'
+];
+
+function isOriginAllowed(origin) {
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  try {
+    const { host } = new URL(origin);
+
+    if (host === 'envelope-digital-frontend-pi.pages.dev') {
+      return true;
+    }
+
+    if (wildcardHostSuffixes.some((suffix) => host.endsWith(suffix))) {
+      return true;
+    }
+
+    // Suporte a padrões em FRONTEND_URLS, como: https://*.meudominio.com
+    return allowedOrigins.some((allowedOrigin) => {
+      if (!allowedOrigin.includes('*')) {
+        return false;
+      }
+
+      const escaped = allowedOrigin
+        .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+        .replace(/\*/g, '.*');
+
+      const pattern = new RegExp(`^${escaped}$`);
+      return pattern.test(origin);
+    });
+  } catch (error) {
+    return false;
+  }
+}
+
 app.use(cors({
   origin: (origin, callback) => {
     // Permite chamadas sem origem (ex.: health checks, curl, Postman)
@@ -27,7 +65,7 @@ app.use(cors({
       return callback(null, true);
     }
 
-    if (allowedOrigins.includes(origin)) {
+    if (isOriginAllowed(origin)) {
       return callback(null, true);
     }
 
