@@ -5,6 +5,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const cidadeRoutes = require('./routes/cidades');
 const viagemRoutes = require('./routes/viagens');
+const migrateRoutes = require('./routes/migrate');
 
 const app = express();
 
@@ -83,6 +84,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/cidades', cidadeRoutes);
 app.use('/api/viagens', viagemRoutes);
+app.use('/api/migrate', migrateRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

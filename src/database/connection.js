@@ -1,6 +1,16 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+const env = {
+  host: process.env.DB_HOST || process.env.AZURE_POSTGRESQL_HOST,
+  port: process.env.DB_PORT || process.env.AZURE_POSTGRESQL_PORT || '5432',
+  user: process.env.DB_USER || process.env.AZURE_POSTGRESQL_USER || process.env.AZURE_POSTGRESQL_USERNAME,
+  password: process.env.DB_PASSWORD || process.env.AZURE_POSTGRESQL_PASSWORD,
+  database: process.env.DB_NAME || process.env.AZURE_POSTGRESQL_DATABASE,
+  poolMax: process.env.DB_POOL_MAX || process.env.AZURE_POSTGRESQL_POOL_MAX || '10',
+  ssl: process.env.DB_SSL || process.env.AZURE_POSTGRESQL_SSL || 'true',
+};
+
 const toPgPlaceholders = (sql) => {
   let index = 0;
   return sql.replace(/\?/g, () => {
@@ -41,17 +51,17 @@ const ensureReturningForInsert = (sql) => {
 };
 
 const dbConfig = {
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  max: parseInt(process.env.DB_POOL_MAX || '10', 10),
+  host: env.host,
+  port: parseInt(env.port, 10),
+  user: env.user,
+  password: env.password,
+  database: env.database,
+  max: parseInt(env.poolMax, 10),
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
 };
 
-if ((process.env.DB_SSL || '').toLowerCase() === 'true') {
+if ((env.ssl || '').toLowerCase() === 'true') {
   dbConfig.ssl = { rejectUnauthorized: false };
 }
 
