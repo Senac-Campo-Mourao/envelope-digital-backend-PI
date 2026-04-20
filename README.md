@@ -1,6 +1,6 @@
 # Envelope Digital – Backend
 
-API REST do sistema **Envelope Digital**, desenvolvida em **Node.js com Express e MySQL**, como parte do **Projeto Integrador do curso Programador Web – Senac**.
+API REST do sistema **Envelope Digital**, desenvolvida em **Node.js com Express e PostgreSQL**, como parte do **Projeto Integrador do curso Programador Web – Senac**.
 
 O objetivo do sistema é digitalizar o controle do **“envelope de viagem” utilizado por caminhoneiros**, permitindo registrar motoristas, veículos e despesas de viagem.
 
@@ -26,8 +26,8 @@ O sistema **Envelope Digital** busca transformar esse processo manual em uma **a
 
 * Node.js
 * Express
-* MySQL
-* MySQL2
+* PostgreSQL
+* pg (node-postgres)
 * Cors
 * Dotenv
 * Nodemon
@@ -172,9 +172,11 @@ Exemplo de arquivo `.env`
 
 ```
 DB_HOST=localhost
+DB_PORT=5432
 DB_USER=root
 DB_PASSWORD=senha
 DB_NAME=envelope_digital
+DB_SSL=false
 ```
 
 ---

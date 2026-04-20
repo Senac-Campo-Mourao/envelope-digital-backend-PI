@@ -103,8 +103,12 @@ class Cidade {
 
     for (const city of cities) {
       await pool.execute(
-        'INSERT IGNORE INTO cidades (cidade, estado_sigla) VALUES (?, ?)',
-        [city.cidade, city.estado_sigla]
+        `INSERT INTO cidades (cidade, estado_sigla)
+         SELECT ?, ?
+         WHERE NOT EXISTS (
+           SELECT 1 FROM cidades WHERE cidade = ? AND estado_sigla = ?
+         )`,
+        [city.cidade, city.estado_sigla, city.cidade, city.estado_sigla]
       );
     }
   }
